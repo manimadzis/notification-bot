@@ -28,24 +28,15 @@ async def start_handler(msg: types.Message, state: FSMContext):
 async def help_handler(msg: types.Message):
     await msg.answer(HELP_MSG, reply_markup=keyboards.start_keyboard)
 
-
 async def stop_handler(msg: types.Message):
-    for notification in notifications[msg.chat.id]:
-        await notification.stop()
-    del notifications[msg.chat.id]
-
-    await msg.answer("Остановлено")
-
-
-async def stop2_handler(msg: types.Message):
     user_notifications = notifications[msg.chat.id]
     if len(user_notifications) == 0:
         await  msg.answer("Нет напоминанний")
         logger.info(f"{msg.chat.id}: Нет напоминанний")
     else:
         markup = types.InlineKeyboardMarkup()
-        for user_notification in user_notifications:
-            markup.add(types.InlineKeyboardButton(str(user_notification), callback_data="3"))
+        for i, user_notification in enumerate(user_notifications):
+            markup.add(types.InlineKeyboardButton(str(user_notification), callback_data=str(i)))
         await msg.answer("Ваши напоминания", reply_markup=markup)
 
 

@@ -1,3 +1,6 @@
 from collections import defaultdict
+from typing import Dict, List
 
-notifications = defaultdict(lambda: [])
+from schedule import Notifier
+
+notifications: Dict[int, List[Notifier]] = defaultdict(lambda: [])

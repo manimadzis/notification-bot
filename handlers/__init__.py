@@ -1,9 +1,8 @@
-from collections import defaultdict
-
 from aiogram.dispatcher.dispatcher import Dispatcher
 
 import handlers.commands
 import handlers.repeater
+import handlers.query_handlers
 import handlers.timer
 import keyboards
 
@@ -12,6 +11,7 @@ def register_handlers(dp: Dispatcher):
     register_commands(dp)
     register_timer_handlers(dp)
     register_repeater_handlers(dp)
+    register_queries(dp)
 
 
 def register_timer_handlers(dp: Dispatcher):
@@ -29,7 +29,10 @@ def register_repeater_handlers(dp: Dispatcher):
 def register_commands(dp: Dispatcher):
     dp.register_message_handler(commands.start_handler, commands=["start"], state="*")
     dp.register_message_handler(commands.help_handler, commands=["help"], state="*")
-    dp.register_message_handler(commands.stop2_handler, commands=["stop"], state="*")
+    dp.register_message_handler(commands.stop_handler, commands=["stop"], state="*")
     dp.register_message_handler(commands.timer_handler, commands=["timer"], state="*")
     dp.register_message_handler(commands.repeater_handler, commands=["repeater"], state="*")
 
+
+def register_queries(dp: Dispatcher):
+    dp.register_callback_query_handler(query_handlers.stop_notification_handler)

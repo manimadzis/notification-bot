@@ -3,7 +3,6 @@ import os
 
 from aiogram import Dispatcher, Bot
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-# from aiogram.contrib.fsm_storage.redis import RedisStorage
 from aiogram.types import BotCommand
 
 import schedule
