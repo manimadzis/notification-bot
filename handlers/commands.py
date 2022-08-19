@@ -37,6 +37,18 @@ async def stop_handler(msg: types.Message):
     await msg.answer("Остановлено")
 
 
+async def stop2_handler(msg: types.Message):
+    user_notifications = notifications[msg.chat.id]
+    if len(user_notifications) == 0:
+        await  msg.answer("Нет напоминанний")
+        logger.info(f"{msg.chat.id}: Нет напоминанний")
+    else:
+        markup = types.InlineKeyboardMarkup()
+        for user_notification in user_notifications:
+            markup.add(types.InlineKeyboardButton(str(user_notification), callback_data="3"))
+        await msg.answer("Ваши напоминания", reply_markup=markup)
+
+
 async def timer_handler(msg: types.Message):
     splitted = msg.text.split(maxsplit=1)
     if len(splitted) != 2:

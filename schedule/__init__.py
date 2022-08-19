@@ -93,6 +93,12 @@ class Notifier(ABC):
         if self.job:
             await self.job.stop()
 
+    def __str__(self):
+        now = datetime.datetime.now()
+        next_run = self.job.next_run
+        after = next_run - now
+        return f"Сработает через {after.seconds} секунд. В {next_run}"
+
 
 class Timer(Notifier):
     def _create_job(self):

@@ -29,7 +29,7 @@ def register_repeater_handlers(dp: Dispatcher):
 def register_commands(dp: Dispatcher):
     dp.register_message_handler(commands.start_handler, commands=["start"], state="*")
     dp.register_message_handler(commands.help_handler, commands=["help"], state="*")
-    dp.register_message_handler(commands.stop_handler, commands=["stop"], state="*")
+    dp.register_message_handler(commands.stop2_handler, commands=["stop"], state="*")
     dp.register_message_handler(commands.timer_handler, commands=["timer"], state="*")
     dp.register_message_handler(commands.repeater_handler, commands=["repeater"], state="*")
 
