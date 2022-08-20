@@ -11,10 +11,10 @@ class Job:
                  repeat: bool = False,
                  on_exit: Callable[[], Coroutine] = None):
         self.func = func
-        self.repeat = repeat
-        self.period = period
-        self.last_run = datetime.datetime.now()
-        self.next_run = self.last_run + self.period
+        self.repeat: bool = repeat
+        self.period: datetime.timedelta = period
+        self.last_run: datetime.datetime = datetime.datetime.now()
+        self.next_run: datetime.datetime = self.last_run + self.period
         self.done = False
         self.on_exit = on_exit
 
@@ -97,7 +97,22 @@ class Notifier(ABC):
         now = datetime.datetime.now()
         next_run = self.job.next_run
         after = next_run - now
-        return f"Сработает через {after.seconds} секунд. В {next_run}"
+
+        str_next_run = next_run.strftime("%H:%M:%S %m/%d/%Y")
+
+        if after.seconds < 60:
+            return f"Сработает через {after.seconds} секунд. В {str_next_run}"
+
+        minutes = after.seconds // 60
+        seconds = after.seconds % 60
+
+        if minutes < 60:
+            return f"Сработает через {minutes} минут и {seconds} секунд. В {str_next_run}"
+
+        hours = minutes // 60
+        minutes = minutes % 60
+
+        return f"Сработает через {hours} часов и {minutes} минут. В {str_next_run}"
 
 
 class Timer(Notifier):

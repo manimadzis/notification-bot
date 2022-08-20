@@ -38,8 +38,8 @@ async def stop_handler(msg: types.Message):
 async def timer_handler(msg: types.Message):
     split = msg.text.split(maxsplit=1)
     if len(split) != 2:
-        logger.info("Не указано время")
-        await msg.answer("Не указано время")
+        logger.info(EMPTY_TIME)
+        await msg.answer(EMPTY_TIME)
         return
 
     period = parse_duration(split[1])
@@ -60,8 +60,8 @@ async def timer_handler(msg: types.Message):
 async def repeater_handler(msg: types.Message):
     split = msg.text.split(maxsplit=1)
     if len(split) != 2:
-        logger.info("Не указано время")
-        await msg.answer("Не указано время")
+        logger.info(EMPTY_TIME)
+        await msg.answer(EMPTY_TIME)
 
     period = parse_duration(split[1])
 
