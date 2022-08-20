@@ -1,12 +1,14 @@
+import uuid
+
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
 import keyboards
+from handlers.notifications import notifications
 from handlers.parser import parse_duration
 from schedule import Timer
 
-from handlers.notifications import notifications
 
 class TimerCommand(StatesGroup):
     input_time = State()
@@ -38,7 +40,7 @@ async def input_message_handler(msg: types.Message, state: FSMContext):
 
     timer = Timer(msg.bot.send_message, chat_id=msg.chat.id, period=period, message=message)
     await timer.run()
-    notifications[msg.chat.id].append(timer)
+    notifications[msg.chat.id][uuid.uuid4()] = timer
     await state.finish()
 
     await msg.answer("таймер установлен", reply_markup=keyboards.start_keyboard)

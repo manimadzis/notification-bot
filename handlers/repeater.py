@@ -1,3 +1,5 @@
+import uuid
+from loguru import logger
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
@@ -39,5 +41,6 @@ async def input_message_handler(msg: types.Message, state: FSMContext):
     await repeater.run()
     await state.finish()
 
-    notifications[msg.chat.id].append(repeater)
+    notifications[msg.chat.id][uuid.uuid4()] = repeater
     await msg.answer("Повторитель установлен", reply_markup=keyboards.start_keyboard)
+    logger.info("Установлен повторитель")

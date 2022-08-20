@@ -1,4 +1,5 @@
 import sys
+import uuid
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
@@ -31,12 +32,12 @@ async def help_handler(msg: types.Message):
 async def stop_handler(msg: types.Message):
     user_notifications = notifications[msg.chat.id]
     if len(user_notifications) == 0:
-        await  msg.answer("Нет напоминанний")
+        await msg.answer("Нет напоминанний")
         logger.info(f"{msg.chat.id}: Нет напоминанний")
     else:
         markup = types.InlineKeyboardMarkup()
-        for i, user_notification in enumerate(user_notifications):
-            markup.add(types.InlineKeyboardButton(str(user_notification), callback_data=str(i)))
+        for uuid_key in user_notifications:
+            markup.add(types.InlineKeyboardButton(str(user_notifications[uuid_key]), callback_data=str(uuid_key)))
         await msg.answer("Ваши напоминания", reply_markup=markup)
 
 
@@ -56,7 +57,7 @@ async def timer_handler(msg: types.Message):
     timer = Timer(send_func=msg.bot.send_message, chat_id=msg.chat.id, period=period, message="Hi")
     await timer.run()
 
-    notifications[msg.chat.id].append(timer)
+    notifications[msg.chat.id][uuid.uuid4()] = timer
 
     await msg.answer("Таймер установлен")
 
@@ -77,6 +78,6 @@ async def repeater_handler(msg: types.Message):
     repeater = Repeater(send_func=msg.bot.send_message, chat_id=msg.chat.id, period=period, message="Hi")
     await repeater.run()
 
-    notifications[msg.chat.id].append(repeater)
+    notifications[msg.chat.id][uuid.uuid4()] = repeater
 
     await msg.answer("Повторитель установлен")
