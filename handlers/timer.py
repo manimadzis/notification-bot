@@ -5,6 +5,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
 import keyboards
+from handlers.messages import *
 from handlers.notifications import notifications
 from handlers.parser import parse_duration
 from schedule import Timer
@@ -16,7 +17,7 @@ class TimerCommand(StatesGroup):
 
 
 async def command_handler(msg: types.Message):
-    await msg.answer("Введите время: ", reply_markup=keyboards.timer_keyboard)
+    await msg.answer(INPUT_TIME, reply_markup=keyboards.timer_keyboard)
     await TimerCommand.input_time.set()
 
 
@@ -25,14 +26,14 @@ async def input_time_handler(msg: types.Message, state: FSMContext):
     if period:
         await TimerCommand.input_message.set()
         await state.update_data({"period": period})
-        await msg.answer("Введите сообщение: ", reply_markup=keyboards.notify_message_keyboard)
+        await msg.answer(INPUT_MESSAGE, reply_markup=keyboards.notify_message_keyboard)
     else:
-        await msg.answer("Невалидное время")
+        await msg.answer(INVALID_TIME)
 
 
 async def input_message_handler(msg: types.Message, state: FSMContext):
     if msg.text == keyboards.BY_DEFAULT:
-        message = "Hi"
+        message = MESSAGE_BY_DEFAULT
     else:
         message = msg.text
 
@@ -43,4 +44,4 @@ async def input_message_handler(msg: types.Message, state: FSMContext):
     notifications[msg.chat.id][uuid.uuid4()] = timer
     await state.finish()
 
-    await msg.answer("таймер установлен", reply_markup=keyboards.start_keyboard)
+    await msg.answer(TIMER_SET, reply_markup=keyboards.start_keyboard)

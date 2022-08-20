@@ -8,6 +8,7 @@ import keyboards
 from handlers.parser import parse_duration
 from schedule import Repeater
 from handlers.notifications import notifications
+from handlers.messages import *
 
 class RepeaterCommand(StatesGroup):
     input_time = State()
@@ -15,7 +16,7 @@ class RepeaterCommand(StatesGroup):
 
 
 async def command_handler(msg: types.Message):
-    await msg.answer("Введите время: ", reply_markup=keyboards.timer_keyboard)
+    await msg.answer(INPUT_TIME, reply_markup=keyboards.timer_keyboard)
     await RepeaterCommand.input_time.set()
 
 
@@ -24,14 +25,14 @@ async def input_time_handler(msg: types.Message, state: FSMContext):
     if period:
         await RepeaterCommand.input_message.set()
         await state.update_data({"period": period})
-        await msg.answer("Введите сообщение: ", reply_markup=keyboards.notify_message_keyboard)
+        await msg.answer(INPUT_MESSAGE, reply_markup=keyboards.notify_message_keyboard)
     else:
-        await msg.answer("Невалидное время")
+        await msg.answer(INVALID_TIME)
 
 
 async def input_message_handler(msg: types.Message, state: FSMContext):
     if msg.text == keyboards.BY_DEFAULT:
-        message = "Hi"
+        message = MESSAGE_BY_DEFAULT
     else:
         message = msg.text
 
@@ -42,5 +43,5 @@ async def input_message_handler(msg: types.Message, state: FSMContext):
     await state.finish()
 
     notifications[msg.chat.id][uuid.uuid4()] = repeater
-    await msg.answer("Повторитель установлен", reply_markup=keyboards.start_keyboard)
-    logger.info("Установлен повторитель")
+    await msg.answer(REPEATER_SET, reply_markup=keyboards.start_keyboard)
+    logger.info(REPEATER_SET)
