@@ -32,6 +32,7 @@ def register_commands(dp: Dispatcher):
     dp.register_message_handler(commands.stop_handler, commands=["stop"], state="*")
     dp.register_message_handler(commands.timer_handler, commands=["timer"], state="*")
     dp.register_message_handler(commands.repeater_handler, commands=["repeater"], state="*")
+    dp.register_message_handler(commands.list_handler, commands=["list"], state="*")
 
 
 def register_queries(dp: Dispatcher):

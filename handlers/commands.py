@@ -25,14 +25,13 @@ async def help_handler(msg: types.Message):
 
 async def stop_handler(msg: types.Message):
     user_notifications = notifications[msg.chat.id]
-    if len(user_notifications) == 0:
-        await msg.answer(NO_NOTIFICATIONS)
-        logger.info(f"{msg.chat.id}: {NO_NOTIFICATIONS}")
-    else:
-        markup = types.InlineKeyboardMarkup()
-        for uuid_key in user_notifications:
-            markup.add(types.InlineKeyboardButton(str(user_notifications[uuid_key]), callback_data=str(uuid_key)))
-        await msg.answer(YOURS_NOTIFICATIONS, reply_markup=markup)
+    message = notification_list(msg.chat.id)
+    markup = types.InlineKeyboardMarkup()
+
+    for i, uuid_key in enumerate(user_notifications, start=1):
+        markup.add(types.InlineKeyboardButton(str(i), callback_data=str(uuid_key)))
+
+    await msg.answer(message, reply_markup=markup)
 
 
 async def timer_handler(msg: types.Message):
@@ -76,3 +75,19 @@ async def repeater_handler(msg: types.Message):
     notifications[msg.chat.id][uuid.uuid4()] = repeater
 
     await msg.answer(REPEATER_SET)
+
+
+def notification_list(chat_id: int) -> str:
+    user_notifications = notifications[chat_id]
+    if len(user_notifications) == 0:
+        return NO_NOTIFICATIONS
+
+    message = YOURS_NOTIFICATIONS + ":\n"
+    for i, uuid_key in enumerate(user_notifications, start=1):
+        message += f"{i}. {MESSAGE}: {user_notifications[uuid_key].message}\n    {user_notifications[uuid_key].before()}\n"
+
+    return message
+
+
+async def list_handler(msg: types.Message):
+    await msg.answer(notification_list(msg.chat.id))

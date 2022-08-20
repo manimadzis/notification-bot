@@ -1,14 +1,16 @@
 import uuid
-from loguru import logger
+
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from loguru import logger
 
 import keyboards
+from handlers.messages import *
+from handlers.notifications import notifications
 from handlers.parser import parse_duration
 from schedule import Repeater
-from handlers.notifications import notifications
-from handlers.messages import *
+
 
 class RepeaterCommand(StatesGroup):
     input_time = State()

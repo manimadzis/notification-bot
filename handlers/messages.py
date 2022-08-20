@@ -7,6 +7,7 @@ INPUT_TIME = "Введите время:"
 NO_NOTIFICATIONS = "Нет уведомлений"
 YOURS_NOTIFICATIONS = "Ваши уведомления"
 EMPTY_TIME = "Не указано время"
+MESSAGE = "Сообщение"
 
 HELP_MSG = """Бот-уведомитель
 /start - начать работу с ботом, вернуться в меню

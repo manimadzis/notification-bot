@@ -93,7 +93,7 @@ class Notifier(ABC):
         if self.job:
             await self.job.stop()
 
-    def __str__(self):
+    def before(self):
         now = datetime.datetime.now()
         next_run = self.job.next_run
         after = next_run - now

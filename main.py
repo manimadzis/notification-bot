@@ -21,6 +21,7 @@ async def set_commands_helper(bot: Bot):
         BotCommand("/timer", "запустить таймер"),
         BotCommand("/repeater", "запустить повторитель"),
         BotCommand("/stop", "остановить"),
+        BotCommand("/list", "список уведомлений"),
         BotCommand("/help", "помощь")
     ]
     await bot.set_my_commands(commands)
