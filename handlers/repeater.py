@@ -1,5 +1,3 @@
-import uuid
-
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
@@ -7,9 +5,8 @@ from loguru import logger
 
 import keyboards
 from handlers.messages import *
-from handlers.notifications import notifications
+from handlers.notifications import Repeater
 from handlers.parser import parse_duration
-from schedule import Repeater
 
 
 class RepeaterCommand(StatesGroup):
@@ -44,6 +41,5 @@ async def input_message_handler(msg: types.Message, state: FSMContext):
     await repeater.run()
     await state.finish()
 
-    notifications[msg.chat.id][uuid.uuid4()] = repeater
     await msg.answer(REPEATER_SET, reply_markup=keyboards.start_keyboard)
     logger.info(REPEATER_SET)

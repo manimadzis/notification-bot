@@ -1,17 +1,12 @@
-import sys
-import uuid
-
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from loguru import logger
 
 import keyboards
+from handlers import notifications
 from handlers.messages import *
-from handlers.notifications import notifications
+from handlers.notifications import Timer, Repeater
 from handlers.parser import parse_duration
-from schedule import Timer, Repeater
-
-logger.add(sys.stderr, format="{time} {level} {message}", level="INFO")
 
 
 async def start_handler(msg: types.Message, state: FSMContext):
@@ -24,7 +19,7 @@ async def help_handler(msg: types.Message):
 
 
 async def stop_handler(msg: types.Message):
-    user_notifications = notifications[msg.chat.id]
+    user_notifications = notifications.get(msg.chat.id)
     message = notification_list(msg.chat.id)
     markup = types.InlineKeyboardMarkup()
 
@@ -51,8 +46,6 @@ async def timer_handler(msg: types.Message):
     timer = Timer(send_func=msg.bot.send_message, chat_id=msg.chat.id, period=period, message="Hi")
     await timer.run()
 
-    notifications[msg.chat.id][uuid.uuid4()] = timer
-
     await msg.answer(TIMER_SET)
 
 
@@ -72,13 +65,11 @@ async def repeater_handler(msg: types.Message):
     repeater = Repeater(send_func=msg.bot.send_message, chat_id=msg.chat.id, period=period, message="Hi")
     await repeater.run()
 
-    notifications[msg.chat.id][uuid.uuid4()] = repeater
-
     await msg.answer(REPEATER_SET)
 
 
 def notification_list(chat_id: int) -> str:
-    user_notifications = notifications[chat_id]
+    user_notifications = notifications.get(chat_id)
     if len(user_notifications) == 0:
         return NO_NOTIFICATIONS
 

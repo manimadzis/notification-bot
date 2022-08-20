@@ -1,14 +1,16 @@
 import uuid
-
+from loguru import logger
 from aiogram import types
+from handlers import notifications
+from handlers.messages import *
 
-from handlers.notifications import notifications
 
+async def stop_notification_handler(query: types.CallbackQuery):
+    logger.info(f"Callback query | data: {query.data}")
+    uuid_key = uuid.UUID(query.data)
+    user_id = query.from_user.id
 
-async def stop_notification_handler(callback_query: types.CallbackQuery):
-    uuid_key = uuid.UUID(callback_query.data)
-    user_id = callback_query.from_user.id
-    await notifications[user_id][uuid_key].stop()
-    await callback_query.bot.send_message(callback_query.from_user.id, "Отменено")
-    await callback_query.answer()
-    del notifications[user_id][uuid_key]
+    await notifications.kill(user_id, uuid_key)
+
+    await query.bot.send_message(query.from_user.id, CANCELED)
+    await query.answer()
