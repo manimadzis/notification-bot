@@ -1,10 +1,6 @@
 from aiogram.dispatcher.dispatcher import Dispatcher
 
-import handlers.commands
-import handlers.repeater
-import handlers.query_handlers
-import handlers.timer
-import keyboards
+from . import query_handlers, timer_fsm, commands, repeater_fsm, keyboards
 
 
 def register_handlers(dp: Dispatcher):
@@ -15,15 +11,15 @@ def register_handlers(dp: Dispatcher):
 
 
 def register_timer_handlers(dp: Dispatcher):
-    dp.register_message_handler(timer.command_handler, lambda msg: msg.text == keyboards.TIMER)
-    dp.register_message_handler(timer.input_time_handler, state=timer.TimerCommand.input_time)
-    dp.register_message_handler(timer.input_message_handler, state=timer.TimerCommand.input_message)
+    dp.register_message_handler(timer_fsm.command_handler, lambda msg: msg.text == keyboards.TIMER)
+    dp.register_message_handler(timer_fsm.input_time_handler, state=timer_fsm.TimerFSM.input_time)
+    dp.register_message_handler(timer_fsm.input_message_handler, state=timer_fsm.TimerFSM.input_message)
 
 
 def register_repeater_handlers(dp: Dispatcher):
-    dp.register_message_handler(repeater.command_handler, lambda msg: msg.text == keyboards.REPEAT_TIMER)
-    dp.register_message_handler(repeater.input_time_handler, state=repeater.RepeaterCommand.input_time)
-    dp.register_message_handler(repeater.input_message_handler, state=repeater.RepeaterCommand.input_message)
+    dp.register_message_handler(repeater_fsm.command_handler, lambda msg: msg.text == keyboards.REPEAT_TIMER)
+    dp.register_message_handler(repeater_fsm.input_time_handler, state=repeater_fsm.RepeaterFSM.input_time)
+    dp.register_message_handler(repeater_fsm.input_message_handler, state=repeater_fsm.RepeaterFSM.input_message)
 
 
 def register_commands(dp: Dispatcher):

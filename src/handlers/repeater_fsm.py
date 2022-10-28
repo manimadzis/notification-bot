@@ -3,35 +3,34 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from loguru import logger
 
-import keyboards
-from handlers.messages import *
-from handlers.notifications import Repeater
-from handlers.parser import parse_duration
+from . import keyboards, messages
+from .notification_store import Repeater
+from .parser import parse_duration
 
 
-class RepeaterCommand(StatesGroup):
+class RepeaterFSM(StatesGroup):
     input_time = State()
     input_message = State()
 
 
 async def command_handler(msg: types.Message):
-    await msg.answer(INPUT_TIME, reply_markup=keyboards.timer_keyboard)
-    await RepeaterCommand.input_time.set()
+    await msg.answer(messages.INPUT_TIME, reply_markup=keyboards.timer_keyboard)
+    await RepeaterFSM.input_time.set()
 
 
 async def input_time_handler(msg: types.Message, state: FSMContext):
     period = parse_duration(msg.text)
     if period:
-        await RepeaterCommand.input_message.set()
+        await RepeaterFSM.input_message.set()
         await state.update_data({"period": period})
-        await msg.answer(INPUT_MESSAGE, reply_markup=keyboards.notify_message_keyboard)
+        await msg.answer(messages.INPUT_MESSAGE, reply_markup=keyboards.notify_message_keyboard)
     else:
-        await msg.answer(INVALID_TIME)
+        await msg.answer(messages.INVALID_TIME)
 
 
 async def input_message_handler(msg: types.Message, state: FSMContext):
     if msg.text == keyboards.BY_DEFAULT:
-        message = MESSAGE_BY_DEFAULT
+        message = messages.MESSAGE_BY_DEFAULT
     else:
         message = msg.text
 
@@ -41,5 +40,5 @@ async def input_message_handler(msg: types.Message, state: FSMContext):
     await repeater.run()
     await state.finish()
 
-    await msg.answer(REPEATER_SET, reply_markup=keyboards.start_keyboard)
-    logger.info(REPEATER_SET)
+    await msg.answer(messages.REPEATER_SET, reply_markup=keyboards.start_keyboard)
+    logger.info(messages.REPEATER_SET)

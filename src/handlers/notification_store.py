@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from functools import partial
 from typing import Dict, Callable, Coroutine
-
-import schedule
+from src.log import logger
+from src import schedule
 
 
 class NotificationStore:
@@ -89,12 +89,15 @@ class NotificationStore:
         self.notifications: Dict[int, Dict[uuid.UUID, Notification]] = defaultdict(lambda: {})
 
     def get(self, chat_id: int) -> Dict[uuid.UUID, Notification]:
+        logger.trace(f"Get notifications by chat_id: {chat_id}")
+
         return self.notifications[chat_id]
 
     def add(self, notification: Notification):
-        uuid_key = uuid.uuid4()
-        self.notifications[notification.chat_id][uuid_key] = notification
-        notification.uuid_key = uuid_key
+        logger.trace(f"Add notification: {notification}")
+
+        notification.uuid_key = uuid.uuid4()
+        self.notifications[notification.chat_id][notification.uuid_key] = notification
 
     def delete(self, chat_id: int, uuid_key: uuid.UUID):
         try:
@@ -103,8 +106,11 @@ class NotificationStore:
             pass
 
     async def kill(self, chat_id: int, uuid_key: uuid.UUID):
+        logger.info(f"Stop notification: chat_id:{chat_id}; notification uuid: {uuid_key}")
+
         notification = self.notifications.get(chat_id, {}).get(uuid_key)
         if not notification:
+            logger.error("Not found notification: chat_id:{chat_id}; notification uuid: {uuid_key}")
             return
 
         await notification.stop()

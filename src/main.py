@@ -1,12 +1,11 @@
 import asyncio
-import os
-import sys
 
 from aiogram import Dispatcher, Bot
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import BotCommand
-from loguru import logger
 
+import config
+import log
 import schedule
 from handlers import register_handlers
 
@@ -30,16 +29,23 @@ async def set_commands_helper(bot: Bot):
 
 
 async def main():
-    token = os.getenv('TELEGRAM_TOKEN')
-    bot = Bot(token=token)
+    config.load("config.yaml")
+    log.init()
+
+    bot = Bot(token=config.config.telegram_token)
     dp = Dispatcher(bot, storage=MemoryStorage())
     Bot.set_current(bot)
-    logger.add(sys.stderr, format="{time} {level} {message}", level="INFO")
     register_handlers(dp)
 
+    logger = log.logger
+
+    logger.info("Setting command helper")
     await set_commands_helper(bot)
+
+    logger.info("Skipping updates")
     await dp.skip_updates()
 
+    logger.info("Starting telegram bot")
     await asyncio.gather(dp.start_polling(), schedule_main())
 
 
