@@ -37,7 +37,7 @@ class Job:
             await self.on_exit()
 
 
-class Schedule:
+class Scheduler:
     def __init__(self):
         self.jobs = []
 
@@ -56,13 +56,8 @@ class Schedule:
                 new_jobs.append(job)
         self.jobs = new_jobs
 
+    async def run_forever(self, tick=1):
+        while True:
+            await self.run()
+            await asyncio.sleep(tick)
 
-default = Schedule()
-
-
-async def run():
-    await default.run()
-
-
-def add(job: Job):
-    default.add(job)
