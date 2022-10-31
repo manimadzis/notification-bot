@@ -78,10 +78,10 @@ class Notification(ABC):
 
 class Timer(Notification):
     def __str__(self):
-        return f"Timer: chat_id: {self.chat_id}; uuid_key: {self.uuid_key}; message: {self.message}; period: {self.period}"
+        return f"Timer(chat_id={self.chat_id}; uuid_key={self.uuid_key}; message={self.message}; period={self.period})"
 
     def __repr__(self):
-        return str(self)
+        return f"Timer(chat_id={self.chat_id}; uuid_key={self.uuid_key}; message={self.message}; period={self.period})"
 
     def _create_job(self):
         self.job = schedule.Job(func=partial(self.send_func, chat_id=self.chat_id, text=self.message),
@@ -91,10 +91,10 @@ class Timer(Notification):
 
 class Repeater(Notification):
     def __str__(self):
-        return f"Repeater: chat_id: {self.chat_id}; uuid_key: {self.uuid_key}; message: {self.message}"
+        return f"Repeater(chat_id={self.chat_id}; uuid_key={self.uuid_key}; message={self.message}; period={self.period})"
 
     def __repr__(self):
-        return str(self)
+        return f"Repeater(chat_id={self.chat_id}; uuid_key={self.uuid_key}; message={self.message}; period={self.period})"
 
     def _create_job(self):
         self.job = schedule.Job(func=partial(self.send_func, chat_id=self.chat_id, text=self.message),

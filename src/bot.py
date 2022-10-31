@@ -85,7 +85,7 @@ class Bot:
         logger.trace(f"Handle /stop: {msg}")
 
         user_notifications = await self._store.get_by_chat_id(msg.chat.id)
-        message = self._notification_list(msg.chat.id)
+        message = await self._notification_list(msg.chat.id)
         markup = aiogram.types.InlineKeyboardMarkup()
 
         for i, uuid_key in enumerate(user_notifications, start=1):
@@ -143,7 +143,7 @@ class Bot:
 
         message = messages.YOURS_NOTIFICATIONS + ":\n"
         for i, notification in enumerate(user_notifications, start=1):
-            message += f"{i}. {messages.MESSAGE}: {user_notifications[notification.uuid_key].message}\n    {user_notifications[notification.uuid_key].before()}\n"
+            message += f"{i}. {messages.MESSAGE}: {notification.message}\n    {notification.before()}\n"
 
         return message
 
