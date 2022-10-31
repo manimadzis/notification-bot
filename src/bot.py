@@ -26,7 +26,7 @@ class Bot:
         # self._dp.register_message_handler(self._start_handler, commands=["start"], state="*")
 
 
-        # self._register_handlers()
+        self._register_handlers()
 
     async def _set_command_list(self):
         commands = [aiogram.types.BotCommand("/start", "начать работу с ботом, вернуться в меню"),
@@ -177,13 +177,17 @@ class Bot:
 
         period = (await state.get_data())["period"]
 
-        timer = Timer(send_func=msg.bot.send_message, chat_id=msg.chat.id, period=period, message=message)
+        timer = Timer(send_func=msg.bot.send_message,
+                      chat_id=msg.chat.id,
+                      period=period,
+                      message=message,
+                      scheduler=self._scheduler)
         await timer.run()
         await self._store.add(timer)
         await state.finish()
 
         await msg.answer(messages.TIMER_SET, reply_markup=keyboards.start_keyboard)
-        logger.info("Set timer")
+        logger.info(f"Set timer: {timer}")
 
     # QUERY HANDLERS
 
@@ -227,7 +231,11 @@ class Bot:
 
         period = (await state.get_data())["period"]
 
-        repeater = Repeater(send_func=msg.bot.send_message, chat_id=msg.chat.id, period=period, message=message)
+        repeater = Repeater(send_func=msg.bot.send_message,
+                            chat_id=msg.chat.id,
+                            period=period,
+                            message=message,
+                            scheduler=self._scheduler)
         await repeater.run()
         await state.finish()
 

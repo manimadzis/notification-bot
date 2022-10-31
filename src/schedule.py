@@ -1,8 +1,7 @@
 import asyncio
 import datetime
 from typing import Coroutine, Callable
-
-
+from log import logger
 class Job:
     def __init__(self, func: Callable[[], Coroutine],
                  period: datetime.timedelta = datetime.timedelta(seconds=0),
@@ -58,6 +57,7 @@ class Scheduler:
 
     async def run_forever(self, tick=1):
         while True:
+            logger.debug(f"Scheduler tick: jobs: {self.jobs}")
             await self.run()
             await asyncio.sleep(tick)
 
